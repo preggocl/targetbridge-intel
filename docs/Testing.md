@@ -59,6 +59,31 @@ make test
 
 Test sources live in `TargetBridge-Receiver/TBReceiverC/tests/`.
 
+## 3a. Receiver Legacy bundle audit
+
+Build an isolated, host-architecture Receiver candidate with:
+
+```bash
+TargetBridge-Receiver/scripts/build_tbreceiver_c_app.sh --legacy
+```
+
+This writes to `build-legacy/TargetBridge Intel Receiver Legacy.app`, uses a
+distinct bundle identifier, and audits every bundled Mach-O for the requested
+architecture, a deployment target no newer than macOS 11, and the known
+`_CVBufferCopyAttachments` Big Sur incompatibility. It also rejects linked
+libraries and runpaths that point to Homebrew outside the app. Homebrew
+libraries may fail the audit. That failure means the dependency set must be
+rebuilt for legacy macOS; do not change the app's minimum version to hide it.
+
+Run the audit's fixture checks with:
+
+```bash
+bash TargetBridge-Receiver/tests/test_legacy_bundle_audit.sh
+```
+
+A successful static audit is only a packaging gate. Launch, decode, reconnect,
+and sustained streaming still require a physical macOS 11 Intel receiver.
+
 ## 4. Mock sender (protocol-level fault injection)
 
 `TargetBridge-Receiver/TBReceiverC/tests/mock_sender.py` (stdlib-only

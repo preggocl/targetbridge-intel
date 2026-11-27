@@ -22,9 +22,10 @@ treated as verified.
 ## Why this fork exists
 
 The upstream Sender was documented and packaged for Apple Silicon. This fork
-keeps the protocol and the original Receiver intact while adding a separately
-packaged Intel Sender and the diagnostics needed to tell whether an Intel Mac
-can capture and encode the selected display reliably.
+adds a separately packaged Intel Sender and diagnostics for Intel capture and
+encoding. The stable Sender release continues to use the unchanged upstream
+Receiver; a separate Receiver Legacy experiment is being reviewed on the
+`receiver-legacy-upstream-sync` branch and is not part of that release.
 
 The application is deliberately isolated from the original installation:
 

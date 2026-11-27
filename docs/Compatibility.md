@@ -13,6 +13,8 @@ one physical direction.
 | Intel Mac with this fork | Apple Silicon Mac with arm64 Receiver | Expected, unverified | The protocol is shared and architecture-neutral; requires an arm64 Receiver package |
 | Apple Silicon Mac with upstream Sender | Intel iMac Receiver | Upstream workflow | Use the upstream arm64 Sender rather than assuming this fork is native arm64 |
 | Apple Silicon Mac running this `x86_64` Sender through Rosetta 2 | Intel Receiver | Planned | Launch, virtual-display creation, ScreenCaptureKit and VideoToolbox behavior must all be checked |
+| Intel iMac running macOS 11 with Receiver Legacy | Intel x86_64 Receiver | Experimental, not package-verified | Source target is 11.0; bundled dependencies must pass the legacy bundle audit and a real Big Sur launch/decode test |
+| Apple Silicon Mac with Receiver Legacy | Native arm64 Receiver | Source-path, unverified | Requires matching arm64 dependencies and a native runtime test; does not change the Intel Sender's x86_64 architecture |
 
 “Expected” means that no protocol or code-path restriction has been identified.
 It is not a substitute for a real capture, encode, network, decode and display
@@ -52,3 +54,9 @@ The practical limitation is packaging: this fork currently distributes only
 the Intel Sender and deliberately does not republish Receiver applications.
 Obtain the appropriate arm64 Receiver from the original project, then validate
 the pair before relying on it.
+
+The separate Receiver Legacy experiment is not a supported download. Upstream
+v3.6.2 still requires macOS 14 for Intel Receiver packages and macOS 15 for
+Apple Silicon packages. Upstream issues [#167](https://github.com/swellweb/targetBridge/issues/167)
+and [#223](https://github.com/swellweb/targetBridge/issues/223) track Big Sur
+and Ventura compatibility gaps.

@@ -26,6 +26,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CoreGraphics.h>
 #include <CoreAudio/CoreAudio.h>
+#include <SystemConfiguration/SystemConfiguration.h>
 
 /* kAudioObjectPropertyElementMain is the macOS 12+ SDK spelling; older SDKs
  * only define kAudioObjectPropertyElementMaster (both are numerically 0). */
@@ -273,6 +274,7 @@ static void tb_receiver_save_language_preference(const char *language_pref) {
 
 static const char *tb_receiver_language_display_name(const char *language_code) {
     if (!language_code || !*language_code) language_code = "en";
+    if (strcmp(language_code, "es") == 0) return "Español";
     if (strcmp(language_code, "it") == 0) return tb_i18n_get("common.language.italian");
     if (strcmp(language_code, "de") == 0) return tb_i18n_get("common.language.german");
     if (strcmp(language_code, "fr") == 0) return tb_i18n_get("common.language.french");
@@ -397,6 +399,8 @@ static void tb_receiver_cycle_language_preference(struct app *a) {
     if (!a) return;
 
     if (strcmp(a->language_pref, "auto") == 0) {
+        snprintf(a->language_pref, sizeof(a->language_pref), "%s", "es");
+    } else if (strcmp(a->language_pref, "es") == 0) {
         snprintf(a->language_pref, sizeof(a->language_pref), "%s", "it");
     } else if (strcmp(a->language_pref, "it") == 0) {
         snprintf(a->language_pref, sizeof(a->language_pref), "%s", "en");
@@ -1615,26 +1619,31 @@ static void tb_receiver_refresh_input_capture(struct app *a) {
     }
 }
 
+static void build_receiver_name(char *buf, size_t bufsz, const char *fallback);
+
 static void send_receiver_info(struct app *a) {
     struct tb_display_info info;
     if (tb_disp_get_info(a->disp, &info) < 0) return;
 
-    /* Always advertise the intended iMac target panel, not the transient
-     * SDL window/debug drawable size. Using the drawable here breaks the
-     * sender's virtual display creation path when running windowed or on
-     * scaled desktops because macOS rejects a HiDPI mode larger than the
-     * advertised backing panel. */
-    const uint32_t panel_w = 5120;
-    const uint32_t panel_h = 2880;
-    const uint32_t mode_w = 2560;
-    const uint32_t mode_h = 1440;
-    const uint32_t capture_w = 2560;
-    const uint32_t capture_h = 1440;
+    /* Advertise the actual panel rather than a fixed 5K iMac profile. The
+     * legacy Receiver must not make a 1920x1080 panel look like a 5K target:
+     * that would create an oversized virtual display and an unnecessary
+     * downscale/upscale pair. Retina panels retain their logical HiDPI mode. */
+    const uint32_t panel_w = info.active_w;
+    const uint32_t panel_h = info.active_h;
+    const int hi_dpi = info.logical_w > 0 && info.logical_h > 0 &&
+                       panel_w >= info.logical_w * 2 && panel_h >= info.logical_h * 2;
+    const uint32_t mode_w = hi_dpi ? info.logical_w : panel_w;
+    const uint32_t mode_h = hi_dpi ? info.logical_h : panel_h;
+    const uint32_t capture_w = panel_w;
+    const uint32_t capture_h = panel_h;
 
     char escaped_name[256];
+    char receiver_name[128];
+    build_receiver_name(receiver_name, sizeof(receiver_name), info.name);
     size_t out = 0;
-    for (size_t i = 0; info.name[i] != '\0' && out + 2 < sizeof(escaped_name); i++) {
-        unsigned char c = (unsigned char)info.name[i];
+    for (size_t i = 0; receiver_name[i] != '\0' && out + 2 < sizeof(escaped_name); i++) {
+        unsigned char c = (unsigned char)receiver_name[i];
         if (c == '"' || c == '\\') {
             escaped_name[out++] = '\\';
             escaped_name[out++] = (char)c;
@@ -1650,13 +1659,14 @@ static void send_receiver_info(struct app *a) {
         sizeof(json),
         "{\"receiverName\":\"%s\",\"panelWidth\":%u,\"panelHeight\":%u,"
         "\"modeWidth\":%u,\"modeHeight\":%u,\"refreshRate\":60,"
-        "\"hiDPI\":true,\"captureWidth\":%u,\"captureHeight\":%u,"
+        "\"hiDPI\":%s,\"captureWidth\":%u,\"captureHeight\":%u,"
         "\"supportsHEVCDecode\":%s,\"supportsRawNV12\":true,\"inputMonitoringTrusted\":%s,\"accessibilityTrusted\":%s}",
         escaped_name,
         panel_w,
         panel_h,
         mode_w,
         mode_h,
+        hi_dpi ? "true" : "false",
         capture_w,
         capture_h,
         tb_dec_supports_hevc_hwdecode() ? "true" : "false",
@@ -1734,6 +1744,27 @@ static void build_display_host(char *buf, size_t bufsz, const char *ip_fallback,
              ? ip_fallback : tb_i18n_get("receiver.network.not_detected"));
 }
 
+/* Use the macOS Computer Name for sender-facing identity. SDL identifies the
+ * physical panel as "iMac", which is useful for local rendering but not for
+ * distinguishing several real receiver Macs in the Sender. */
+static void build_receiver_name(char *buf, size_t bufsz, const char *fallback) {
+    if (!buf || bufsz == 0) return;
+    buf[0] = '\0';
+
+    CFStringEncoding encoding = kCFStringEncodingUTF8;
+    CFStringRef name = SCDynamicStoreCopyComputerName(NULL, &encoding);
+    if (name) {
+        (void)CFStringGetCString(name, buf, (CFIndex)bufsz, kCFStringEncodingUTF8);
+        CFRelease(name);
+    }
+    if (buf[0] == '\0' && fallback && fallback[0] != '\0') {
+        snprintf(buf, bufsz, "%s", fallback);
+    }
+    if (buf[0] == '\0') {
+        snprintf(buf, bufsz, "%s", "TargetBridge Receiver");
+    }
+}
+
 /* ---- Main ------------------------------------------------------------ */
 
 int main(int argc, char **argv) {
@@ -1793,6 +1824,7 @@ int main(int argc, char **argv) {
 
     a.disp = tb_disp_create(fullscreen);
     if (!a.disp) { fprintf(stderr, "tb_disp_create failed\n"); return 1; }
+    tb_receiver_install_about_menu();
 
     /* Open SDL Audio Device */
     SDL_AudioSpec spec;

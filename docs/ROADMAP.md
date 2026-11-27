@@ -1,17 +1,24 @@
 # Roadmap
 
-## Next / committed
+## Next
 
-- Validate Full HD 30 and 60 fps against the iMac 2011 Receiver Legacy
-  prototype over Ethernet, including fullscreen and reconnect.
-- Package a prerelease only after physical validation.
+- Make the Receiver's macOS 11 dependency build reproducible. The source target
+  alone is insufficient: upstream issue #167 documents a missing Big Sur
+  CoreVideo symbol in bundled FFmpeg libraries.
+- Build and audit the Receiver separately for x86_64 and arm64 using matching
+  dependency architectures and a unique bundle identity.
+- Run the legacy package on Intel Big Sur and complete sustained Full HD,
+  reconnect, and sleep/wake acceptance before any release proposal.
 
 ## Planned
 
-- Continue Receiver Legacy compatibility work with isolated packaging.
-- Re-test universal Sender behavior on Apple Silicon and Intel pairs.
+- Re-test Sender/Receiver combinations on Intel and Apple Silicon hardware.
+- Track upstream issue #223 for Ventura compatibility and PR #243 for 5K
+  receiver backpressure; adopt only after review and mixed-version validation.
+- Keep the Receiver Legacy experiment separate from the stable Intel Sender
+  release and its signing/package workflow.
 
 ## Exploratory
 
-- Receiver UI improvements and additional legacy display profiles.
-- Better automatic profile selection from receiver panel capabilities.
+- Additional display profiles and automatic profile selection from receiver
+  panel capabilities.

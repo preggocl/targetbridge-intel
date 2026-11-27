@@ -53,6 +53,7 @@ static id g_key_down_monitor = nil;
 static id g_key_up_monitor = nil;
 static id g_flags_monitor = nil;
 static id g_system_defined_monitor = nil;
+static id g_about_menu_target = nil;
 static BOOL g_active = NO;
 static NSTimeInterval g_last_horizontal_gesture_at = 0.0;
 static CGFloat g_horizontal_accumulator = 0.0;
@@ -137,5 +138,51 @@ void tb_gesture_bridge_set_active(int active) {
     if (!g_active) {
         g_horizontal_accumulator = 0.0;
         g_last_horizontal_gesture_at = 0.0;
+    }
+}
+
+@interface TBReceiverAboutMenuTarget : NSObject
+@end
+
+@implementation TBReceiverAboutMenuTarget
+
+- (IBAction)showAbout:(id)sender {
+    (void)sender;
+    NSString *credits =
+        @"TargetBridge Intel Receiver Legacy\n"
+         "\n"
+         "Intel compatibility fork maintained by AndyStuardo.\n"
+         "\n"
+         "Legacy package: macOS 11+ on Intel Macs, with H.264 software "
+         "fallback when VideoToolbox cannot decode a stream.\n"
+         "\n"
+         "Based on the open-source TargetBridge project by swellweb and contributors.";
+    NSDictionary *options = @{
+        NSAboutPanelOptionApplicationName: @"TargetBridge Intel Receiver Legacy",
+        NSAboutPanelOptionApplicationVersion: @TB_RECEIVER_VERSION,
+        NSAboutPanelOptionVersion: @TB_RECEIVER_BUILD,
+        NSAboutPanelOptionCredits: [[NSAttributedString alloc] initWithString:credits]
+    };
+    [NSApp orderFrontStandardAboutPanelWithOptions:options];
+    [NSApp activateIgnoringOtherApps:YES];
+}
+
+@end
+
+void tb_receiver_install_about_menu(void) {
+    if (g_about_menu_target || !NSApp.mainMenu) return;
+
+    NSMenuItem *app_item = [NSApp.mainMenu itemAtIndex:0];
+    NSMenu *app_menu = app_item.submenu;
+    if (!app_menu) return;
+
+    for (NSMenuItem *item in app_menu.itemArray) {
+        if (item.action == @selector(orderFrontStandardAboutPanel:)) {
+            g_about_menu_target = [[TBReceiverAboutMenuTarget alloc] init];
+            item.target = g_about_menu_target;
+            item.action = @selector(showAbout:);
+            item.title = @"About TargetBridge Intel Receiver Legacy";
+            return;
+        }
     }
 }
