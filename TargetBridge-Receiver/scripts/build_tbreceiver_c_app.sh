@@ -14,13 +14,13 @@ if [[ "$MODE" == "--legacy" ]]; then
   BUILD_DIR="${REPO_ROOT}/build-legacy"
   APP_NAME="TargetBridge Intel Receiver Legacy"
   APP_ID="com.targetbridge.intel-receiver-legacy"
-  APP_VERSION="${APP_VERSION:-3.3.0}"
+  APP_VERSION="${APP_VERSION:-3.3.0-intel.1}"
   MIN_OS="11.0"
 else
   BUILD_DIR="${REPO_ROOT}/build"
   APP_NAME="TargetBridge Receiver"
   APP_ID="com.targetbridge.receiver"
-  APP_VERSION="${APP_VERSION:-3.3.0}"
+  APP_VERSION="${APP_VERSION:-3.3.0-intel.1}"
   MIN_OS="11.0"
 fi
 APP_DIR="${BUILD_DIR}/${APP_NAME}.app"

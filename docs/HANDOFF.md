@@ -1,6 +1,6 @@
 # Handoff
 
-Updated: 2026-11-26. Review branch: `receiver-legacy-upstream-sync`.
+Updated: 2026-11-27. Review branch: `receiver-legacy-upstream-sync`.
 
 This branch carries forward the recovered Receiver Legacy changes from the
 iCloud checkout and the upstream HEVC hardware-capability fix from PR #232.

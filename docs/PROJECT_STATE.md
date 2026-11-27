@@ -3,7 +3,9 @@
 Updated: 2026-11-26
 
 Active review branch: `receiver-legacy-upstream-sync`, based on the fork's
-`intel-sender` branch. The stable Intel Sender remains `3.3.0-intel.1`; this
+`intel-sender` branch. The stable Intel Sender remains `3.3.0-intel.1`; the
+experimental Receiver bundle also defaults to this fork version string and
+uses a separate legacy bundle identity. This
 Receiver work is experimental and is not included in the Sender release.
 
 The iCloud checkout still has local branch `receiver-legacy-software-decode`
