@@ -20,9 +20,14 @@ capped backoff. Verify this on physical Thunderbolt hardware before release.
 The default-on keep-awake setting inhibits idle sleep during active capture;
 display sleep is a separate setting. Neither overrides macOS lid-close sleep.
 
-Closed-lid operation is now specified as a planned native Sender subproject in
-`docs/Closed-Lid-Power-Addon.md`. It requires explicit administrator
-authorization, a narrowly scoped helper, temporary power-policy changes,
+Closed-lid operation now has a pure safety policy and public battery/thermal
+monitor in `TargetBridge-Sender/TBDisplaySender/Addons/ClosedLidPower/`, with
+focused x86_64 tests passing. The helper transaction has five passing tests.
+Architecture research selected an `SMAppService` LaunchDaemon and signed-team
+XPC peer validation for the current macOS 14 floor. The feature is not
+user-operational: it has no daemon, durable journal, lid sensor, or Sender
+lifecycle/UI integration. It requires explicit
+administrator authorization, a narrowly scoped helper, temporary power-policy changes,
 exact restoration, battery/thermal stop conditions, and physical Intel and
 Apple silicon validation. No helper is implemented or installed yet. The
 Sender project currently targets macOS 14.0, so Receiver Legacy macOS 11 work

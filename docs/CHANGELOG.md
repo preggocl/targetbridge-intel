@@ -19,6 +19,16 @@
   compatibility gates. No privileged helper or power-setting change is
   implemented in this design milestone.
 
+## Unreleased — Closed-lid safety foundation
+
+- Added a pure stream power policy plus public IOPowerSources battery and
+  ProcessInfo thermal observations with focused tests. This is an internal
+  foundation only; no lid override, privileged helper, lifecycle integration,
+  or settings control is enabled.
+- Selected Apple's `SMAppService` LaunchDaemon path for the current macOS 14
+  floor and added a tested pure begin/restore transaction model. Registration,
+  XPC, durable recovery, and power-setting I/O remain unimplemented.
+
 ## Unreleased — Full HD legacy receiver support
 
 - Added 1920 × 1080 H.264 profiles at 30 fps and 60 fps.

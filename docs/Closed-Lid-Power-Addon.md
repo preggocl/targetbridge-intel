@@ -1,6 +1,8 @@
 # Closed-Lid Streaming Power Add-on
 
-Status: **design accepted for implementation; no privileged code is installed**  
+Status: **safety policy, public battery/thermal monitor, and pure restore
+transaction model implemented; no privileged code is installed and the feature
+is not user-operational**
 Owner: TargetBridge Sender  
 Scope: optional, native Sender add-on for keeping an active stream alive when a
 portable Mac's lid closes, with explicit power, battery, and thermal safeguards.
@@ -22,6 +24,20 @@ the value it found before the session on every normal or recoverable exit.
 This add-on does not create a virtual display and does not claim to make a
 TargetBridge Receiver count as Apple's physically attached clamshell display.
 It is an optional software workaround, not an Apple-supported clamshell mode.
+
+### Implementation status (2026-11-27)
+
+The current development milestone adds a pure safety-policy reducer, an
+injectable monitor using IOPowerSources and ProcessInfo thermal notifications,
+and a pure helper-transaction model for prior-value capture, bounded session
+identifiers, and compare-before-restore decisions. Focused Intel-architecture
+tests cover these pieces. The privileged design now targets an `SMAppService`
+LaunchDaemon under the existing macOS 14 deployment floor, with XPC restricted
+to the signed TargetBridge team and a single allowlisted power-policy
+operation. There is no daemon target or registration code, durable journal,
+XPC transport, lid sensor, stream lifecycle integration, settings control, or
+hardware acceptance yet. This implementation cannot keep a Mac awake with its
+lid closed and does not change system power settings.
 
 ## User experience and warning
 
@@ -154,11 +170,15 @@ must therefore:
   verification fails, stop/decline the closed-lid mode and leave macOS policy
   untouched where possible.
 
-Choose between the macOS privileged-helper service mechanisms only after
-checking the deployment target. The current Sender project declares macOS
-14.0, while the legacy Receiver work targets older macOS. Do not lower the
-Sender's deployment target or claim legacy support as part of this add-on
-without a separate build/runtime compatibility decision.
+Use the macOS 13+ `SMAppService` LaunchDaemon mechanism for the current macOS
+14.0 Sender floor. Registration requires explicit administrator approval;
+observe its status and provide a clear unsupported/approval-required state.
+`SMJobBless` is deprecated and is not the selected path. Require a real
+Developer ID team identity for production helper communication; ad-hoc builds
+must leave the privileged feature unavailable. The legacy Receiver work does
+not change this floor. Do not lower the Sender deployment target or claim
+legacy support as part of this add-on without a separate build/runtime
+compatibility decision.
 
 ## Compatibility and validation matrix
 
@@ -222,4 +242,7 @@ TargetBridge's security and compatibility requirements.
 - [mac-keepawake](https://github.com/fainir/mac-keepawake)
 - [Apple ProcessInfo thermal state](https://developer.apple.com/documentation/foundation/processinfo/thermalstate-swift.enum)
 - [Apple IOPowerSources](https://developer.apple.com/documentation/iokit/iopowersources_h)
+- [Apple SMAppService](https://developer.apple.com/documentation/servicemanagement/smappservice)
+- [Apple Service Management helper migration](https://developer.apple.com/documentation/servicemanagement/updating-helper-executables-from-earlier-versions-of-macos)
+- [Apple XPC peer signing requirements](https://developer.apple.com/documentation/foundation/nsxpclistener/setconnectioncodesigningrequirement(_:))
 - [Apple: idle-sleep assertion behavior](https://developer.apple.com/documentation/iokit/kiopmassertiontypepreventuseridlesystemsleep)

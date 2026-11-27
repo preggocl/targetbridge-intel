@@ -38,11 +38,16 @@ rewritten. Continue commits and GitHub updates from the clean review checkout.
   sleep; a separate option controls display sleep. macOS lid-close sleep is not
   overrideable by the Sender, so clamshell use requires Apple's external
   display/power/input-device setup.
-- The proposed Closed-Lid Streaming Power feature is documented as an internal
-  native Sender add-on in `docs/Closed-Lid-Power-Addon.md`. It is off by
-  default by design and is not implemented: no privileged helper is installed,
-  and no system power setting has been changed. The design includes explicit
-  admin authorization, exact-setting restoration, battery and thermal guards,
+- The Closed-Lid Streaming Power feature now has a pure safety-policy reducer
+  and a public IOPowerSources/ProcessInfo battery and thermal monitor under
+  `TargetBridge-Sender/TBDisplaySender/Addons/ClosedLidPower/`. Focused policy
+  and monitor tests pass in the x86_64 test configuration. A pure transaction
+  model now covers begin-state capture, bounded session IDs, and conditional
+  restore; its 5 focused tests pass. The helper direction is `SMAppService`
+  LaunchDaemon on macOS 14+, with signed-team XPC peer checks. It is not yet
+  user-operational: no lid sensor, privileged helper, stream lifecycle
+  integration, or settings UI exists; no system power setting has changed.
+  The design requires explicit admin authorization, exact-setting restoration, battery and thermal guards,
   and physical Intel/arm64 validation gates. The existing Sender deployment
   target is macOS 14.0; older Sender support remains a separate decision.
 - Local review build has product version `3.3.0`, Intel release identifier
