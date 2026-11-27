@@ -38,6 +38,13 @@ rewritten. Continue commits and GitHub updates from the clean review checkout.
   sleep; a separate option controls display sleep. macOS lid-close sleep is not
   overrideable by the Sender, so clamshell use requires Apple's external
   display/power/input-device setup.
+- The proposed Closed-Lid Streaming Power feature is documented as an internal
+  native Sender add-on in `docs/Closed-Lid-Power-Addon.md`. It is off by
+  default by design and is not implemented: no privileged helper is installed,
+  and no system power setting has been changed. The design includes explicit
+  admin authorization, exact-setting restoration, battery and thermal guards,
+  and physical Intel/arm64 validation gates. The existing Sender deployment
+  target is macOS 14.0; older Sender support remains a separate decision.
 - Local review build has product version `3.3.0`, Intel release identifier
   `3.3.0-intel.1`, and full UTC `CFBundleVersion` `20261127023800`. The app and
   ZIP are in `build-intel/backups/3.3.0-intel.1-build-20261127023800/` in the

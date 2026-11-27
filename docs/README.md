@@ -25,6 +25,8 @@ the Intel package changes installation, compatibility or user interface.
 - [Binary verification](verify-binaries.md): GitHub artifact attestations.
 - [Automation](Automation.md), [Add-ons](Addons.md),
   [Translations](Translations.md) and [audio internals](audio.md).
+- [Closed-Lid Streaming Power add-on design](Closed-Lid-Power-Addon.md):
+  planned privileged Sender subproject, safety rules, and compatibility gates.
 
 ## Upstream material
 

@@ -142,6 +142,7 @@ and must be completed before making broader claims.
 - [Release and packaging process](docs/Release-Process.md)
 - [Automation](docs/Automation.md)
 - [Add-ons](docs/Addons.md)
+- [Closed-Lid Streaming Power add-on design](docs/Closed-Lid-Power-Addon.md)
 - [Translations](docs/Translations.md)
 - [Safe uninstall script](uninstall.sh)
 

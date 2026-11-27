@@ -16,6 +16,12 @@
 
 ## Planned
 
+- Design and implement the opt-in Closed-Lid Streaming Power native add-on.
+  Keep it separate from idle-sleep control; require explicit administrator
+  authorization, restore the exact prior power setting, and stop streaming on
+  configured low-battery or critical thermal conditions. Complete the
+  compatibility and physical hardware gates in
+  [Closed-Lid-Power-Addon.md](Closed-Lid-Power-Addon.md) before release.
 - Re-test Sender/Receiver combinations on Intel and Apple Silicon hardware.
 - Track upstream issue #223 for Ventura compatibility and PR #243 for 5K
   receiver backpressure; adopt only after review and mixed-version validation.

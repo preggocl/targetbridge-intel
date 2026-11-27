@@ -20,6 +20,14 @@ capped backoff. Verify this on physical Thunderbolt hardware before release.
 The default-on keep-awake setting inhibits idle sleep during active capture;
 display sleep is a separate setting. Neither overrides macOS lid-close sleep.
 
+Closed-lid operation is now specified as a planned native Sender subproject in
+`docs/Closed-Lid-Power-Addon.md`. It requires explicit administrator
+authorization, a narrowly scoped helper, temporary power-policy changes,
+exact restoration, battery/thermal stop conditions, and physical Intel and
+Apple silicon validation. No helper is implemented or installed yet. The
+Sender project currently targets macOS 14.0, so Receiver Legacy macOS 11 work
+does not establish compatibility for this feature.
+
 The iCloud source checkout remains on `receiver-legacy-software-decode` with
 damaged Git ancestry. Its files mirror this review branch, but do future Git
 commits from the clean review checkout instead of resetting or rebasing the
@@ -36,6 +44,9 @@ Next gates:
    streaming with disconnect/reconnect and sleep/wake checks.
 4. Revisit upstream PR #243 only after it is merged or its protocol and old/new
    Sender behavior have been independently validated.
+5. Implement the closed-lid power add-on only after reviewing its privilege
+   boundary and selecting the oldest supported Sender macOS; follow the
+   design's battery, thermal, lifecycle, and physical-hardware gates.
 
 The current development machine is Apple Silicon/macOS 15.7.7. It cannot
 substitute for the Big Sur runtime gate. Keep the original upstream Receiver

@@ -49,6 +49,15 @@ force a closed MacBook to remain awake. On iMac, this preference can prevent
 idle sleep during transmission, while explicit sleep or power conditions can
 still end the stream.
 
+**Planned native add-on:** Closed-Lid Streaming Power would offer an explicit,
+privileged workaround while a stream is active. It is off by default, separate
+from the idle-sleep preference, and must restore the previous macOS power
+setting when the stream ends or a safety condition stops it. Its understated
+administrator-authorization notice and safety rules are documented in
+[Closed-Lid-Power-Addon.md](Closed-Lid-Power-Addon.md). This is not implemented
+or hardware-validated yet, and it does not turn the Receiver into a physical
+clamshell display.
+
 ## Display Profiles
 
 **Intel fork addition/adaptation:** `Work 4K` and the 4K logical HiDPI modes

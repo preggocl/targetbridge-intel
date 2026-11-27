@@ -11,6 +11,14 @@
   `20261127023800`, archived under `build-intel/backups/`; 85 tests passed and
   the app opened locally. Physical link recovery is not yet validated.
 
+## Unreleased — Closed-lid power add-on design
+
+- Documented an opt-in native Sender subproject for temporary closed-lid
+  streaming power control, including a restrained privilege notice, helper
+  security boundary, battery/thermal safeguards, and Intel/Apple silicon
+  compatibility gates. No privileged helper or power-setting change is
+  implemented in this design milestone.
+
 ## Unreleased — Full HD legacy receiver support
 
 - Added 1920 × 1080 H.264 profiles at 30 fps and 60 fps.
