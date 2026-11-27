@@ -6,6 +6,11 @@ Active review branch: `receiver-legacy-upstream-sync`, based on the fork's
 `intel-sender` branch. The stable Intel Sender remains `3.3.0-intel.1`; this
 Receiver work is experimental and is not included in the Sender release.
 
+The iCloud checkout still has local branch `receiver-legacy-software-decode`
+and damaged Git ancestry (its parent commit `0d98e9d` is missing locally). Its
+source files have been synced to this review branch, but its history was not
+rewritten. Continue commits and GitHub updates from the clean review checkout.
+
 ## Recovered and carried forward
 
 - Intel Sender configuration and packaging remain isolated from upstream.

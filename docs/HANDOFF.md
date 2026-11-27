@@ -8,6 +8,11 @@ The stable Sender release and its package identity remain unchanged. The
 Receiver Legacy app uses a separate bundle identity and is excluded from the
 Sender release workflow.
 
+The iCloud source checkout remains on `receiver-legacy-software-decode` with
+damaged Git ancestry. Its files mirror this review branch, but do future Git
+commits from the clean review checkout instead of resetting or rebasing the
+iCloud copy.
+
 Next gates:
 
 1. Rebuild and pin FFmpeg, SDL2/SDL3 and transitive libraries with macOS 11
