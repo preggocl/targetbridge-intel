@@ -7,8 +7,9 @@
 - Added a separate default-on keep-awake option during active capture; display
   sleep remains independently configurable and lid-close sleep cannot be
   overridden by the app.
-- Added x86_64 local review build `202611270004`; 85 tests passed and the app
-  opened locally. Physical link recovery is not yet validated.
+- Added x86_64 local review build `3.3.0` / `3.3.0-intel.1`, build
+  `20261127023800`, archived under `build-intel/backups/`; 85 tests passed and
+  the app opened locally. Physical link recovery is not yet validated.
 
 ## Unreleased — Full HD legacy receiver support
 

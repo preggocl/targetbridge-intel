@@ -2,10 +2,12 @@
 
 Updated: 2026-11-27. Review branch: `receiver-legacy-upstream-sync`.
 
-Latest local Sender review build: `3.3.0-intel.1` (`202611270004`), stored in
-`Builds/3.3.0-intel.1/build-202611270004/`. It opens on the development Mac;
-physical Receiver recovery, Thunderbolt interruption and lid-close behavior
-still need hardware testing.
+Latest local Sender review build: product version `3.3.0`, Intel release
+identifier `3.3.0-intel.1`, and full UTC build number `20261127023800`. It is
+stored in `build-intel/backups/3.3.0-intel.1-build-20261127023800/` in the
+active iCloud project. It opens on the development Mac; physical Receiver
+recovery, Thunderbolt interruption and lid-close behavior still need hardware
+testing.
 
 This branch carries forward the recovered Receiver Legacy changes from the
 iCloud checkout and the upstream HEVC hardware-capability fix from PR #232.

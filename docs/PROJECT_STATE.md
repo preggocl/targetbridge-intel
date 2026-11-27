@@ -38,10 +38,12 @@ rewritten. Continue commits and GitHub updates from the clean review checkout.
   sleep; a separate option controls display sleep. macOS lid-close sleep is not
   overrideable by the Sender, so clamshell use requires Apple's external
   display/power/input-device setup.
-- Local review build `3.3.0-intel.1` build `202611270004` is in
-  `Builds/3.3.0-intel.1/build-202611270004/`; 85 tests passed and its
-  extracted app opened on the development Mac. It is ad-hoc signed and has not
-  been tested with a live Receiver.
+- Local review build has product version `3.3.0`, Intel release identifier
+  `3.3.0-intel.1`, and full UTC `CFBundleVersion` `20261127023800`. The app and
+  ZIP are in `build-intel/backups/3.3.0-intel.1-build-20261127023800/` in the
+  active iCloud project. 85 tests passed; the extracted app opened on the
+  development Mac. It is ad-hoc signed and has not been tested with a live
+  Receiver.
 
 ## Current upstream status
 
