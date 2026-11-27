@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SENDER_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 REPO_ROOT="$(cd "$SENDER_ROOT/.." && pwd)"
-DERIVED_DATA_DIR="${TMPDIR:-/tmp}/TargetBridgeIntelSender-DerivedData"
+DERIVED_DATA_DIR="${TB_INTEL_DERIVED_DATA_DIR:-${TMPDIR:-/tmp}/TargetBridgeIntelSender-DerivedData}"
 PRODUCT_NAME="TargetBridge Intel Sender"
 DEST_DIR="$REPO_ROOT/build-intel"
 INTEL_BUILD_NUMBER="${TB_INTEL_BUILD_NUMBER:-$(date -u +%Y%m%d%H%M%S)}"

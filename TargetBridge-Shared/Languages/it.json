@@ -51,7 +51,7 @@
   "sender.mode_line_5": "Scegli la sorgente, poi bilancia fluidità e nitidezza col profilo stream.",
   "sender.toggle.show_menu_bar_icon": "Mostra icona nella top bar",
   "sender.toggle.large_cursor": "Cursore ingrandito sul receiver",
-  "sender.toggle.prevent_display_sleep": "Impedisci screensaver e sospensione display durante lo streaming",
+  "sender.toggle.prevent_display_sleep": "Impedisci screensaver e sospensione del display durante lo streaming",
   "sender.toggle.auto_restart_on_wake": "Riavvia automaticamente la cattura al risveglio o sblocco",
   "sender.toggle.stream_audio": "Trasmetti audio",
   "sender.toggle.default_stream_audio": "Abilita audio di default per i nuovi schermi",
@@ -183,5 +183,7 @@
   "sender.input_bindings.add": "Aggiungi",
   "sender.input_bindings.empty": "Nessuna scorciatoia. Aggiungine una per trasformare una combinazione premuta sul receiver in un'azione su questo Mac.",
   "sender.input_bindings.details": "Disponibile quando Receiver e Master. Il trigger viene premuto sul receiver; l'azione viene eseguita su questo Mac. Il trigger non puo essere una scorciatoia riservata da macOS, come Ctrl+Freccia Sinistra per gli Spazi: usa invece Ctrl+Option+Freccia Sinistra. L'azione puo usare anche scorciatoie riservate, incluso Ctrl+Freccia Sinistra per cambiare Spazio su questo Mac.",
-  "sender.input_bindings.record": "Premi i tasti..."
+  "sender.input_bindings.record": "Premi i tasti...",
+  "sender.toggle.auto_reconnect_on_drop": "Riconnetti automaticamente se il ricevitore o il collegamento cade",
+  "sender.toggle.keep_mac_awake_during_stream": "Mantieni il Mac attivo durante lo streaming (lo schermo può spegnersi)"
 }

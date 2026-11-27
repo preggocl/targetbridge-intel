@@ -2,11 +2,21 @@
 
 Updated: 2026-11-27. Review branch: `receiver-legacy-upstream-sync`.
 
+Latest local Sender review build: `3.3.0-intel.1` (`202611270004`), stored in
+`Builds/3.3.0-intel.1/build-202611270004/`. It opens on the development Mac;
+physical Receiver recovery, Thunderbolt interruption and lid-close behavior
+still need hardware testing.
+
 This branch carries forward the recovered Receiver Legacy changes from the
 iCloud checkout and the upstream HEVC hardware-capability fix from PR #232.
 The stable Sender release and its package identity remain unchanged. The
 Receiver Legacy app uses a separate bundle identity and is excluded from the
 Sender release workflow.
+
+The Sender now automatically retries dropped/failed Receiver connections with
+capped backoff. Verify this on physical Thunderbolt hardware before release.
+The default-on keep-awake setting inhibits idle sleep during active capture;
+display sleep is a separate setting. Neither overrides macOS lid-close sleep.
 
 The iCloud source checkout remains on `receiver-legacy-software-decode` with
 damaged Git ancestry. Its files mirror this review branch, but do future Git

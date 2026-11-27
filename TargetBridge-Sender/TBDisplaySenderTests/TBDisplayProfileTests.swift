@@ -2,6 +2,10 @@ import XCTest
 @testable import TargetBridge
 
 final class TBDisplayProfileTests: XCTestCase {
+    func testReconnectBackoffGrowsAndCapsAtThirtySeconds() {
+        XCTAssertEqual((1...7).map(TBReconnectBackoff.delay(forAttempt:)), [2, 4, 8, 16, 30, 30, 30])
+    }
+
     func testFullHDProfileUsesConservativeExtendedDesktopSettings() {
         let settings = TBDisplayProfile.fullHD.settings
 

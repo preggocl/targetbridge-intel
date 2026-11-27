@@ -183,5 +183,7 @@
   "sender.input_bindings.add": "添加",
   "sender.input_bindings.empty": "尚未设置快捷键。添加一个后，可将 receiver 上按下的组合键映射为这台 Mac 上的操作。",
   "sender.input_bindings.details": "仅在“Receiver 是 Master”时可用。触发组合键在 receiver 上按下；操作在这台 Mac 上执行。触发组合键不能是 macOS 保留快捷键，例如用于切换空间的 Ctrl+左箭头：请改用 Ctrl+Option+左箭头。操作可以使用保留快捷键，包括使用 Ctrl+左箭头切换这台 Mac 的空间。",
-  "sender.input_bindings.record": "请按快捷键..."
+  "sender.input_bindings.record": "请按快捷键...",
+  "sender.toggle.auto_reconnect_on_drop": "接收器或链路断开时自动重新连接",
+  "sender.toggle.keep_mac_awake_during_stream": "传输时保持 Mac 唤醒（屏幕仍可关闭）"
 }

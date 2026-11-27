@@ -46,7 +46,7 @@
   "sender.mode_line_5": "Elige la fuente y luego equilibra movimiento y nitidez con el perfil de transmisión.",
   "sender.toggle.show_menu_bar_icon": "Mostrar icono en la barra superior",
   "sender.toggle.large_cursor": "Cursor grande en el receptor",
-  "sender.toggle.prevent_display_sleep": "Evitar salvapantallas o reposo mientras se transmite",
+  "sender.toggle.prevent_display_sleep": "Evitar salvapantallas o reposo de pantalla mientras se transmite",
   "sender.toggle.auto_restart_on_wake": "Reiniciar la captura al despertar o desbloquear",
   "sender.toggle.stream_audio": "Transmitir audio",
   "sender.toggle.default_stream_audio": "Activar audio de forma predeterminada en sesiones nuevas",
@@ -142,5 +142,7 @@
   "receiver.mode.requested_preset_codec": "solicitado %{width} × %{height} px (%{preset}, %{codec})",
   "receiver.mode.requested_preset": "solicitado %{width} × %{height} px (%{preset})",
   "receiver.mode.requested_codec": "solicitado %{width} × %{height} px (%{codec})",
-  "receiver.mode.requested": "solicitado %{width} × %{height} px"
+  "receiver.mode.requested": "solicitado %{width} × %{height} px",
+  "sender.toggle.auto_reconnect_on_drop": "Reconectar automáticamente si cae el receptor o el enlace",
+  "sender.toggle.keep_mac_awake_during_stream": "Mantener el Mac activo mientras transmite (la pantalla puede apagarse)"
 }

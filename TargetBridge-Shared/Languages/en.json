@@ -183,5 +183,7 @@
   "sender.input_bindings.add": "Add",
   "sender.input_bindings.empty": "No shortcuts yet. Add one to map a shortcut pressed on the receiver to an action on this Mac.",
   "sender.input_bindings.details": "Available when Receiver is Master. Trigger is pressed on the receiver; Action runs on this Mac. The trigger cannot be a macOS-reserved shortcut, such as Ctrl+Left for Spaces: use Ctrl+Option+Left instead. The action may use reserved shortcuts, including Ctrl+Left to switch this Mac's Space.",
-  "sender.input_bindings.record": "Press keys..."
+  "sender.input_bindings.record": "Press keys...",
+  "sender.toggle.auto_reconnect_on_drop": "Auto-reconnect when the Receiver or link drops",
+  "sender.toggle.keep_mac_awake_during_stream": "Keep Mac awake during streaming (display may turn off)"
 }

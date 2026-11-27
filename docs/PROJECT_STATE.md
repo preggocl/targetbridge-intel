@@ -1,6 +1,6 @@
 # Project state
 
-Updated: 2026-11-26
+Updated: 2026-11-27
 
 Active review branch: `receiver-legacy-upstream-sync`, based on the fork's
 `intel-sender` branch. The stable Intel Sender remains `3.3.0-intel.1`; the
@@ -30,6 +30,18 @@ rewritten. Continue commits and GitHub updates from the clean review checkout.
   [#232](https://github.com/swellweb/targetBridge/pull/232), merged to
   `maint-3.6` on 2026-11-12. VideoToolbox must report hardware HEVC support
   before the Receiver advertises it.
+- Sender auto-reconnect after Receiver/link loss is implemented as an opt-in
+  setting; it retries the configured endpoint with capped backoff. The x86_64
+  build and 84-test unit suite passed; physical cable-pull and Receiver-restart
+  acceptance is pending.
+- While capture runs, the default-on keep-awake option inhibits idle system
+  sleep; a separate option controls display sleep. macOS lid-close sleep is not
+  overrideable by the Sender, so clamshell use requires Apple's external
+  display/power/input-device setup.
+- Local review build `3.3.0-intel.1` build `202611270004` is in
+  `Builds/3.3.0-intel.1/build-202611270004/`; 85 tests passed and its
+  extracted app opened on the development Mac. It is ad-hoc signed and has not
+  been tested with a live Receiver.
 
 ## Current upstream status
 

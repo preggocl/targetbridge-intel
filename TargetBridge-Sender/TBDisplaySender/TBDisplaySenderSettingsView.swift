@@ -67,7 +67,9 @@ struct TBDisplaySenderSettingsView: View {
                     Toggle(TBDisplaySenderL10n.largeCursor(service.language), isOn: $service.largeCursor)
                         .disabled(service.anyConnected)
                     Toggle(TBDisplaySenderL10n.preventDisplaySleep(service.language), isOn: $service.preventDisplaySleep)
+                    Toggle(TBDisplaySenderL10n.keepMacAwakeDuringStream(service.language), isOn: $service.keepMacAwakeDuringStream)
                     Toggle(TBDisplaySenderL10n.autoRestartOnWake(service.language), isOn: $service.autoRestartOnWake)
+                    Toggle(TBDisplaySenderL10n.autoReconnectOnDrop(service.language), isOn: $service.autoReconnectOnDrop)
                     Toggle(TBDisplaySenderL10n.verboseDisplayLogging(service.language), isOn: $service.verboseDisplayLogging)
                 }
 

@@ -2,6 +2,10 @@
 
 ## Next
 
+- Validate opt-in Sender reconnect with physical cable pull, Receiver
+  restart, and repeated outage/recovery cycles; verify manual stop cancels it.
+- Validate closed-lid MacBook operation with external power, display, keyboard
+  and mouse; the app cannot suppress macOS lid-close sleep by itself.
 - Make the Receiver's macOS 11 dependency build reproducible. The source target
   alone is insufficient: upstream issue #167 documents a missing Big Sur
   CoreVideo symbol in bundled FFmpeg libraries.
