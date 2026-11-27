@@ -21,6 +21,12 @@ The current official manifests bundled with the app are:
 - `Audio Relay`
 - `Input Dockstation`
 
+The planned **Closed-Lid Streaming Power** add-on is a native Sender feature,
+not a JSON-manifest addon. It needs to coordinate with stream lifecycle and a
+narrow privileged helper; imported manifests cannot load code or receive
+privileges. See [Closed-Lid Streaming Power Add-on](Closed-Lid-Power-Addon.md)
+for its design, security boundary, warning copy, and compatibility gates.
+
 Bundled official addon manifests also ship inside the app bundle and are mirrored to:
 
 `~/Library/Application Support/TargetBridge Intel Sender/Addons/Official/`
@@ -83,6 +89,10 @@ Current capability identifiers
 - `network-link`
 - `audio-relay`
 - `input-dockstation`
+
+Closed-lid power control is intentionally not a manifest capability. The
+privileged helper and safety state machine must remain part of the signed
+TargetBridge product and its review process.
 
 Input Dockstation
 -----------------

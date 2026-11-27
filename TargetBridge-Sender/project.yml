@@ -70,6 +70,21 @@ targets:
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/TargetBridge.app/Contents/MacOS/TargetBridge"
         BUNDLE_LOADER: "$(TEST_HOST)"
 
+  ClosedLidPowerHelper:
+    type: tool
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: ClosedLidPowerHelper
+      - path: TBDisplaySender/Addons/ClosedLidPower/TBClosedLidPowerPolicy.swift
+    settings:
+      base:
+        PRODUCT_NAME: "TargetBridge Closed-Lid Power Helper"
+        PRODUCT_BUNDLE_IDENTIFIER: com.targetbridge.intel-sender.closedlid-helper
+        SWIFT_VERSION: "6.0"
+        SWIFT_STRICT_CONCURRENCY: minimal
+        GENERATE_INFOPLIST_FILE: YES
+
   TBIntelDisplaySender:
     type: application
     platform: macOS

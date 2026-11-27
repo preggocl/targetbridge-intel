@@ -27,6 +27,37 @@ Related reading:
 - [QuickStart-ES.md](QuickStart-ES.md)
 - [QuickStart-EN.md](QuickStart-EN.md)
 
+## Automatic Reconnection
+
+**Intel fork addition:** the Sender can automatically retry a configured
+Receiver after the TCP link closes, the Receiver ends its session, or a
+connection attempt fails or times out. Enable **Auto-reconnect when the
+Receiver or link drops** in Settings. It is off by default and retries the
+same receiver/interface with a delay that grows from 2 to 30 seconds. Stopping
+the session manually cancels retries. This reconnects the transport and starts
+a fresh Receiver session; it does not resume an interrupted frame or capture
+state mid-stream. The existing wake/unlock capture restart is a separate option.
+
+The **Keep Mac awake during streaming** preference is enabled by default and
+blocks idle system sleep through an app activity while capture is active. The
+separate **Prevent screensaver / display sleep** preference controls whether
+the local display may turn off. macOS can ignore app sleep assertions for
+lid-close, low-battery, or
+other system sleep requests. Closed-lid MacBook use follows Apple's clamshell
+requirements (external display, power, keyboard and mouse); the Sender cannot
+force a closed MacBook to remain awake. On iMac, this preference can prevent
+idle sleep during transmission, while explicit sleep or power conditions can
+still end the stream.
+
+**Planned native add-on:** Closed-Lid Streaming Power would offer an explicit,
+privileged workaround while a stream is active. It is off by default, separate
+from the idle-sleep preference, and must restore the previous macOS power
+setting when the stream ends or a safety condition stops it. Its understated
+administrator-authorization notice and safety rules are documented in
+[Closed-Lid-Power-Addon.md](Closed-Lid-Power-Addon.md). This is not implemented
+or hardware-validated yet, and it does not turn the Receiver into a physical
+clamshell display.
+
 ## Display Profiles
 
 **Intel fork addition/adaptation:** `Work 4K` and the 4K logical HiDPI modes

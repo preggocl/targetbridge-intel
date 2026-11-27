@@ -88,6 +88,18 @@ final class TBDisplaySenderService: ObservableObject {
             objectWillChange.send()
         }
     }
+    @Published var keepMacAwakeDuringStream: Bool = {
+        if UserDefaults.standard.object(forKey: "fd.tbdisplaysender.keepMacAwakeDuringStream") == nil {
+            return true
+        }
+        return UserDefaults.standard.bool(forKey: "fd.tbdisplaysender.keepMacAwakeDuringStream")
+    }() {
+        didSet {
+            UserDefaults.standard.set(keepMacAwakeDuringStream, forKey: "fd.tbdisplaysender.keepMacAwakeDuringStream")
+            sessions.forEach { $0.keepMacAwakeDuringStream = keepMacAwakeDuringStream }
+            objectWillChange.send()
+        }
+    }
     @Published var autoRestartOnWake: Bool = {
         if UserDefaults.standard.object(forKey: "fd.tbdisplaysender.autoRestartOnWake") == nil {
             return true
@@ -97,6 +109,18 @@ final class TBDisplaySenderService: ObservableObject {
         didSet {
             UserDefaults.standard.set(autoRestartOnWake, forKey: "fd.tbdisplaysender.autoRestartOnWake")
             sessions.forEach { $0.autoRestartOnWake = autoRestartOnWake }
+            objectWillChange.send()
+        }
+    }
+    @Published var autoReconnectOnDrop: Bool = {
+        if UserDefaults.standard.object(forKey: "fd.tbdisplaysender.autoReconnectOnDrop") == nil {
+            return false
+        }
+        return UserDefaults.standard.bool(forKey: "fd.tbdisplaysender.autoReconnectOnDrop")
+    }() {
+        didSet {
+            UserDefaults.standard.set(autoReconnectOnDrop, forKey: "fd.tbdisplaysender.autoReconnectOnDrop")
+            sessions.forEach { $0.autoReconnectOnDrop = autoReconnectOnDrop }
             objectWillChange.send()
         }
     }
@@ -325,7 +349,9 @@ final class TBDisplaySenderService: ObservableObject {
             language: language,
             largeCursor: largeCursor,
             preventDisplaySleep: preventDisplaySleep,
+            keepMacAwakeDuringStream: keepMacAwakeDuringStream,
             autoRestartOnWake: autoRestartOnWake,
+            autoReconnectOnDrop: autoReconnectOnDrop,
             audioEnabled: audioEnabled && audioRelayAvailable,
             verboseDisplayLogging: verboseDisplayLogging
         )
@@ -448,7 +474,9 @@ final class TBDisplaySenderService: ObservableObject {
                 language: language,
                 largeCursor: largeCursor,
                 preventDisplaySleep: preventDisplaySleep,
+                keepMacAwakeDuringStream: keepMacAwakeDuringStream,
                 autoRestartOnWake: autoRestartOnWake,
+                autoReconnectOnDrop: autoReconnectOnDrop,
                 audioEnabled: audioEnabled && audioRelayAvailable,
                 verboseDisplayLogging: verboseDisplayLogging
             )

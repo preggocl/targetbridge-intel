@@ -9,6 +9,11 @@
 struct tb_display;
 
 struct tb_display_info {
+    /* Logical desktop mode reported by SDL before any Retina backing-store
+     * adjustment. */
+    uint32_t logical_w;
+    uint32_t logical_h;
+    /* Physical panel dimensions in pixels. */
     uint32_t active_w;
     uint32_t active_h;
     uint32_t window_w;

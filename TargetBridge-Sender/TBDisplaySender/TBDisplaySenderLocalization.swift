@@ -403,8 +403,16 @@ enum TBDisplaySenderL10n {
         text("sender.toggle.prevent_display_sleep", language)
     }
 
+    static func keepMacAwakeDuringStream(_ language: TBDisplaySenderLanguage) -> String {
+        text("sender.toggle.keep_mac_awake_during_stream", language)
+    }
+
     static func autoRestartOnWake(_ language: TBDisplaySenderLanguage) -> String {
         text("sender.toggle.auto_restart_on_wake", language)
+    }
+
+    static func autoReconnectOnDrop(_ language: TBDisplaySenderLanguage) -> String {
+        text("sender.toggle.auto_reconnect_on_drop", language)
     }
 
     static func restartCaptureButton(_ language: TBDisplaySenderLanguage) -> String {

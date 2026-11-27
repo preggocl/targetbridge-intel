@@ -10,6 +10,13 @@ import Network
 @preconcurrency import ScreenCaptureKit
 import VideoToolbox
 
+enum TBReconnectBackoff {
+    static func delay(forAttempt attempt: Int) -> TimeInterval {
+        guard attempt > 0 else { return 2.0 }
+        return min(30.0, 2.0 * pow(2.0, Double(min(attempt - 1, 4))))
+    }
+}
+
 enum TBDisplayCapturePreset: String, CaseIterable, Identifiable {
     case fullHD30
     case fullHD60
@@ -982,7 +989,9 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
         language: TBDisplaySenderLanguage,
         largeCursor: Bool,
         preventDisplaySleep: Bool,
+        keepMacAwakeDuringStream: Bool = true,
         autoRestartOnWake: Bool,
+        autoReconnectOnDrop: Bool = false,
         audioEnabled: Bool,
         verboseDisplayLogging: Bool = false
     ) {
@@ -994,7 +1003,9 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
         self.language = language
         self.largeCursor = largeCursor
         self.preventDisplaySleep = preventDisplaySleep
+        self.keepMacAwakeDuringStream = keepMacAwakeDuringStream
         self.autoRestartOnWake = autoRestartOnWake
+        self.autoReconnectOnDrop = autoReconnectOnDrop
         self.audioEnabled = audioEnabled
         self.verboseDisplayLogging = verboseDisplayLogging
         self.streamResolutionText = TBDisplaySenderL10n.streamSummary(
@@ -1108,8 +1119,17 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
         }
     }
     @Published var largeCursor: Bool
-    @Published var preventDisplaySleep: Bool = true
+    @Published var preventDisplaySleep: Bool = true {
+        didSet { refreshStreamingActivityOptions() }
+    }
+    @Published var keepMacAwakeDuringStream: Bool = true {
+        didSet { refreshStreamingActivityOptions() }
+    }
     @Published var autoRestartOnWake: Bool = true
+    @Published var autoReconnectOnDrop: Bool = false
+    private var reconnectTask: Task<Void, Never>?
+    private var reconnectAttempt = 0
+    private var userRequestedStop = false
     @Published var verboseDisplayLogging: Bool = false {
         didSet {
             if verboseDisplayLogging {
@@ -1407,6 +1427,9 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
 
     func connect() {
         guard connection == nil, !receiverIP.isEmpty, !localInterfaceIP.isEmpty else { return }
+        userRequestedStop = false
+        reconnectTask?.cancel()
+        reconnectTask = nil
         connectTimeoutWorkItem?.cancel()
         connectTimeoutWorkItem = nil
         recvBuffer.removeAll(keepingCapacity: false)
@@ -1458,6 +1481,7 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
                 case .ready:
                     self.connectTimeoutWorkItem?.cancel()
                     self.connectTimeoutWorkItem = nil
+                    self.reconnectAttempt = 0
                     self.isConnected = true
                     TBLog.connection.info("connect: ready — \(self.receiverIP, privacy: .public) via \(self.connectInterfaceName ?? "?", privacy: .public)")
                     self.setStatus(.waitingDisplayProfile)
@@ -1487,6 +1511,7 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
                     TBLog.connection.error("connect: failed — \(error.localizedDescription, privacy: .public); \(detail, privacy: .public)")
                     self.setStatus(.connectionFailed("\(error.localizedDescription) — \(detail)"))
                     self.stop(resetStatusTo: nil)
+                    self.scheduleReconnectIfNeeded(reason: "connection failed")
                 case .cancelled:
                     self.isConnected = false
                 default:
@@ -1618,6 +1643,9 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
     }
 
     func stop(persistArrangement: Bool = true) {
+        userRequestedStop = true
+        reconnectTask?.cancel()
+        reconnectTask = nil
         stop(resetStatusTo: .stopped, persistArrangement: persistArrangement)
     }
 
@@ -1848,6 +1876,7 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
                         self.setStatus(.receiverClosedConnection)
                     }
                     self.stop(resetStatusTo: nil)
+                    self.scheduleReconnectIfNeeded(reason: error == nil ? "receiver closed connection" : "connection dropped")
                     return
                 }
                 self.receiveLoop(on: connection)
@@ -1865,6 +1894,7 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
             recvBuffer.removeAll(keepingCapacity: false)
             setStatus(.connectionClosed(String(describing: error)))
             stop(resetStatusTo: nil)
+            scheduleReconnectIfNeeded(reason: "invalid receiver data")
         }
     }
 
@@ -1904,6 +1934,7 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
             case .teardown:
                 setStatus(.receiverTerminatedSession)
                 stop(resetStatusTo: nil)
+                scheduleReconnectIfNeeded(reason: "receiver ended session")
                 return
             case .clipboard:
                 if let clipboard = TBMonitorProtocol.decodeJSON(TBMonitorClipboard.self, from: payload) {
@@ -2312,6 +2343,7 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
             ) else {
                 self.setStatus(.virtualDisplayCreationFailed)
                 self.stop(resetStatusTo: nil)
+                self.scheduleReconnectIfNeeded(reason: "virtual display creation failed")
                 return
             }
             if self.captureSource == .desktopMirror {
@@ -2342,6 +2374,7 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
             let started = await self.startCapture(for: profile)
             guard started else {
                 self.stop(resetStatusTo: nil)
+                self.scheduleReconnectIfNeeded(reason: "capture start failed")
                 return
             }
 
@@ -2436,6 +2469,7 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
                     guard let self else { return }
                     self.setStatus(.captureError(self.formattedCaptureErrorMessage(for: error)))
                     self.stop(resetStatusTo: nil)
+                    self.scheduleReconnectIfNeeded(reason: "capture stream failed")
                 }
             }
             captureDelegate = delegate
@@ -2507,11 +2541,23 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
     }
 
     private func activityOptions() -> ProcessInfo.ActivityOptions {
-        var options: ProcessInfo.ActivityOptions = [.userInitiated, .idleSystemSleepDisabled]
+        var options: ProcessInfo.ActivityOptions = [.userInitiated]
+        if keepMacAwakeDuringStream {
+            options.insert(.idleSystemSleepDisabled)
+        }
         if preventDisplaySleep {
             options.insert(.idleDisplaySleepDisabled)
         }
         return options
+    }
+
+    private func refreshStreamingActivityOptions() {
+        guard isStreaming, let activity = streamingActivity else { return }
+        ProcessInfo.processInfo.endActivity(activity)
+        streamingActivity = ProcessInfo.processInfo.beginActivity(
+            options: activityOptions(),
+            reason: "TargetBridge streaming active"
+        )
     }
 
     private func waitForCaptureDisplay() async throws -> SCDisplay {
@@ -3219,11 +3265,31 @@ final class TBDisplaySenderSession: NSObject, ObservableObject, Identifiable, @u
                 TBLog.connection.error("connect: timed out — \(detail, privacy: .public)")
                 self.setStatus(.connectionFailed("\(timeoutMessage) — \(detail)"))
                 self.stop(resetStatusTo: nil)
+                self.scheduleReconnectIfNeeded(reason: "connection timeout")
             }
         }
         
         connectTimeoutWorkItem = workItem
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: workItem)
+    }
+
+    private func scheduleReconnectIfNeeded(reason: String) {
+        guard autoReconnectOnDrop, !userRequestedStop, !isCableTesting,
+              reconnectTask == nil, !receiverIP.isEmpty, !localInterfaceIP.isEmpty else { return }
+        reconnectAttempt += 1
+        let delay = TBReconnectBackoff.delay(forAttempt: reconnectAttempt)
+        TBLog.connection.warning("reconnect: attempt \(self.reconnectAttempt) in \(delay)s after \(reason, privacy: .public)")
+        reconnectTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            guard let self else { return }
+            guard !Task.isCancelled, self.autoReconnectOnDrop,
+                  !self.userRequestedStop, self.connection == nil else {
+                self.reconnectTask = nil
+                return
+            }
+            self.reconnectTask = nil
+            self.connect()
+        }
     }
 
     private func processAudio(_ sampleBuffer: CMSampleBuffer) {

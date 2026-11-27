@@ -23,6 +23,9 @@ SHA256SUMS.txt
 
 The Receiver is intentionally absent. Link users to the original TargetBridge
 Receiver releases rather than repackaging a binary this fork has not changed.
+The Receiver Legacy experiment has a separate bundle identity and remains
+excluded until its bundled dependencies pass the macOS 11 audit and its
+packaged build passes a physical Big Sur acceptance run.
 
 ## Local release candidate
 

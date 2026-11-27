@@ -16,22 +16,25 @@
 
 CC       ?= clang
 PKG      ?= pkgconf
-APP_VERSION ?= 3.2.0
+APP_VERSION ?= 3.3.0-intel.1
 APP_BUILD   ?= dev
 
 MACOSX_DEPLOYMENT_TARGET ?= 11.0
+ARCH ?= $(shell uname -m)
 export MACOSX_DEPLOYMENT_TARGET
 
 CFLAGS   += -O2 -g -Wall -Wextra -Wno-unused-parameter -std=c11
-CFLAGS   += $(shell $(PKG) --cflags libavcodec libavutil sdl2)
+CFLAGS   += $(shell $(PKG) --cflags libavcodec libavutil libswscale sdl2)
 CFLAGS   += -DTB_RECEIVER_VERSION=\"$(APP_VERSION)\" -DTB_RECEIVER_BUILD=\"$(APP_BUILD)\"
 CFLAGS   += -DTB_LANGUAGE_SOURCE_DIR=\"$(abspath ../../TargetBridge-Shared/Languages)\"
 
-LDFLAGS  += $(shell $(PKG) --libs libavcodec libavutil sdl2)
+LDFLAGS  += $(shell $(PKG) --libs libavcodec libavutil libswscale sdl2)
 
 UNAME_S  := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-LDFLAGS  += -framework ApplicationServices -framework AppKit -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework VideoToolbox -framework CoreMedia -framework CoreVideo -framework IOSurface -framework CoreServices -framework CoreAudio
+CFLAGS   += -arch $(ARCH)
+LDFLAGS  += -arch $(ARCH)
+LDFLAGS  += -framework ApplicationServices -framework AppKit -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework SystemConfiguration -framework VideoToolbox -framework CoreMedia -framework CoreVideo -framework IOSurface -framework CoreServices -framework CoreAudio
 endif
 
 C_SRC = src/main.c src/net.c src/decoder.c src/display.c src/tb_i18n.c
