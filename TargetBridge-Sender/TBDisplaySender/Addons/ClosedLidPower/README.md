@@ -3,10 +3,11 @@
 Internal native Sender add-on. This directory contains the pure safety policy,
 public battery/thermal observation layer, bounded session lease, private
 journal, and injected-settings coordinator. The feature is **not
-user-operational**: it has no privileged daemon/XPC transport, production
-power-setting adapter, lifecycle integration, settings UI, or lid detection.
-The coordinator tests do not execute `pmset` and make no system power-setting
-changes.
+user-operational**: an unregistered daemon executable target now includes
+fixed `pmset` arguments, a signed-team XPC gate, and a lease watchdog. It has
+not been run and has no LaunchDaemon plist, registration path, Sender client,
+IPC tests, lifecycle integration, settings UI, or lid detection. Coordinator
+tests use a fake settings store and make no system power-setting changes.
 
 Read the design and safety requirements in
 [`docs/Closed-Lid-Power-Addon.md`](../../../../docs/Closed-Lid-Power-Addon.md)

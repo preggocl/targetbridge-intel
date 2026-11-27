@@ -153,6 +153,41 @@ enum TBClosedLidPowerTransaction {
     }
 }
 
+enum TBClosedLidPowerHelperIdentity {
+    static let machServiceName = "com.targetbridge.intel-sender.closedlid-helper"
+    static let clientBundleIdentifier = "com.targetbridge.intel-sender"
+    static let journalPath = "/var/db/TargetBridgeClosedLidPower"
+
+    static func signingRequirement(bundleIdentifier: String, teamIdentifier: String) -> String? {
+        let validTeam = teamIdentifier.range(of: "^[A-Z0-9]{10}$", options: .regularExpression) != nil
+        let validBundle = bundleIdentifier.range(of: "^[A-Za-z0-9.-]+$", options: .regularExpression) != nil
+        guard validTeam, validBundle else { return nil }
+        return "identifier \"\(bundleIdentifier)\" and anchor apple generic and certificate leaf[subject.OU] = \"\(teamIdentifier)\""
+    }
+}
+
+enum TBClosedLidPowerPMSetCommand {
+    static let executablePath = "/usr/bin/pmset"
+
+    static func setArguments(disabled: Bool) -> [String] {
+        ["-a", "disablesleep", disabled ? "1" : "0"]
+    }
+
+    static func parseSleepDisabled(_ output: String) -> Bool? {
+        for line in output.split(whereSeparator: \.isNewline) {
+            let fields = line.split(whereSeparator: \.isWhitespace)
+            guard fields.first == "SleepDisabled" else { continue }
+            guard fields.count == 2 else { return nil }
+            switch fields[1] {
+            case "0": return false
+            case "1": return true
+            default: return nil
+            }
+        }
+        return nil
+    }
+}
+
 enum TBClosedLidPowerJournalError: Error, Equatable {
     case invalidDirectory
     case invalidFile

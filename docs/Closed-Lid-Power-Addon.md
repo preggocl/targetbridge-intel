@@ -1,8 +1,8 @@
 # Closed-Lid Streaming Power Add-on
 
-Status: **safety policy, public battery/thermal monitor, and tested lease/journal
-coordinator implemented; no privileged service is registered and the feature
-is not user-operational**
+Status: **policy, monitor, lease journal/coordinator, and an unregistered
+LaunchDaemon executable target implemented; privileged service is not
+registered and the feature is not user-operational**
 Owner: TargetBridge Sender  
 Scope: optional, native Sender add-on for keeping an active stream alive when a
 portable Mac's lid closes, with explicit power, battery, and thermal safeguards.
@@ -38,11 +38,18 @@ pieces, including external edits, reboot, expiry, and malformed/symlinked
 records. The privileged design now targets an `SMAppService`
 LaunchDaemon under the existing macOS 14 deployment floor, with XPC restricted
 to the signed TargetBridge team and a single allowlisted power-policy
-operation. The coordinator uses an injected settings store; it does not run
-`pmset` or alter system settings. There is no daemon target or registration
-code, production settings adapter, XPC transport, lid sensor, stream lifecycle
-integration, settings control, or hardware acceptance yet. This implementation
-cannot keep a Mac awake with its lid closed.
+operation. The daemon executable target now contains fixed-argument `pmset`
+read/write calls (the executable, argument allowlist, and strict
+`SleepDisabled` parser have pure unit tests), a root-owned journal path, a
+watchdog, and four XPC methods.
+The XPC listener fails closed unless a valid Team ID is present in its signed
+helper's own code signature; the ad-hoc development build has none. The
+coordinator tests use an injected settings store. The helper target builds for x86_64 and arm64, but has not been run. The helper target is a compile-only prototype; there is
+no LaunchDaemon plist, helper packaging or registration path, Sender XPC
+client, IPC integration test, lid sensor, stream lifecycle integration, settings
+control, or hardware acceptance. No service
+was registered and no system setting was changed. Closed-lid streaming is not
+operational.
 
 ## User experience and warning
 

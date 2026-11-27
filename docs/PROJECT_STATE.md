@@ -45,9 +45,13 @@ rewritten. Continue commits and GitHub updates from the clean review checkout.
   model now covers begin-state capture, bounded session IDs, and conditional
   restore. A root-ownership/mode-checked atomic lease journal and serialized
   coordinator now test bounded heartbeat leases, failed-restore retry,
-  external edits, and boot-change recovery. The full Sender suite passes 116
-  tests; Intel Release and arm64 Debug builds pass. These tests use an injected
-  fake settings store; no production helper or `pmset` adapter exists. The helper direction is `SMAppService`
+  external edits, boot-change recovery, and the fixed `pmset` command/parser. The full Sender suite passes 119
+  tests; Intel Release and arm64 Debug builds pass. An unregistered daemon
+  executable with fixed `pmset` arguments and a signed-team XPC gate derived
+  from its own code signature builds for
+  x86_64 and arm64. It has not been run; the signed team, LaunchDaemon plist,
+  packaging/registration, sender client, and IPC tests are still missing. The
+  helper direction is `SMAppService`
   LaunchDaemon on macOS 14+, with signed-team XPC peer checks. It is not yet
   user-operational: no lid sensor, privileged helper, stream lifecycle
   integration, or settings UI exists; no system power setting has changed.

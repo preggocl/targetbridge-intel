@@ -23,16 +23,17 @@ display sleep is a separate setting. Neither overrides macOS lid-close sleep.
 Closed-lid operation now has a pure safety policy, public battery/thermal
 monitor, and a tested lease/journal coordinator in
 `TargetBridge-Sender/TBDisplaySender/Addons/ClosedLidPower/`. The full x86_64
-Sender suite passes 116 tests; Intel Release and arm64 Debug builds passed.
+Sender suite passes 119 tests; Intel Release and arm64 Debug builds passed.
 The coordinator uses an injected settings store and does not touch system power.
-Architecture
-research selected an `SMAppService` LaunchDaemon and signed-team XPC peer
-validation for the current macOS 14 floor. The feature is not user-operational:
-it has no daemon target, production settings adapter, lid sensor, or Sender
-lifecycle/UI integration. It requires explicit
+The unregistered LaunchDaemon executable target also builds x86_64 and arm64;
+it contains fixed `pmset` arguments, a watchdog and a signed-team XPC gate. It
+has not been run, and the build has no configured Team ID, plist, registration,
+Sender client, or IPC tests. Architecture research selected an
+`SMAppService` LaunchDaemon for the current macOS 14 floor. The feature is not
+user-operational: it has no lid sensor or Sender lifecycle/UI integration. It requires explicit
 administrator authorization, a narrowly scoped helper, temporary power-policy changes,
 exact restoration, battery/thermal stop conditions, and physical Intel and
-Apple silicon validation. No helper is implemented or installed yet. The
+Apple silicon validation. A compile-only helper prototype exists but is not packaged, registered, or installed. The
 Sender project currently targets macOS 14.0, so Receiver Legacy macOS 11 work
 does not establish compatibility for this feature.
 

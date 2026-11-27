@@ -75,13 +75,18 @@ power settings or install/register privileged services.
 - [x] Add focused tests for prior value, invalid/existing sessions, external changes, and bounded identifiers.
 - [x] Implement a private atomic lease journal and serialized session coordinator with injected settings I/O, owner checks, bounded heartbeat expiry using monotonic uptime, compare-and-restore, and boot-session recovery decisions.
 - [x] Test filesystem mode/owner, malformed/symlink records, lease expiry, wrong owner, helper retry after failed restore, external setting changes, and boot-session change.
-- [ ] Implement daemon/XPC targets and production settings adapter; do not add registration until signing identity and recovery behavior are reviewed.
+- [x] Add an unregistered daemon executable target with fixed-argument `pmset`, signed-team XPC listener gate, peer UID ownership, watchdog, and allowlisted XPC methods.
+- [x] Derive the required peer Team ID from the helper's own code signature; reject unsigned/ad-hoc identity before activating the listener.
+- [x] Unit-test the exact `pmset` executable/argument allowlist and fail-closed output parser without launching the process.
+- [ ] Add LaunchDaemon packaging metadata and Sender client only after signing identity, peer verification, IPC integration tests, and lifecycle recovery are reviewed.
 - [ ] Threat-review code identity, IPC framing/allowlist, journal permissions, crash/reboot recovery, and uninstall.
 
-The injected coordinator tests do not invoke `pmset`; only a future daemon
-adapter may make system changes. Derive the caller UID from the authenticated
-XPC audit identity, never from a request field. Use one coordinator instance
-inside the singleton daemon to serialize all client sessions.
+The injected coordinator tests do not invoke `pmset`; the compiled but
+unregistered daemon target contains that adapter. The daemon derives caller
+UID from XPC's kernel-supplied `effectiveUserIdentifier` after the listener's
+code-signing gate, never from a request field. Use one coordinator instance
+inside the singleton daemon to serialize all client sessions. Do not run the
+helper in development while its approved signing team is unconfigured.
 
 ### Task 3: Privileged helper and reversible power-policy transaction
 

@@ -27,13 +27,19 @@
   or settings control is enabled.
 - Selected Apple's `SMAppService` LaunchDaemon path for the current macOS 14
   floor and added a tested pure begin/restore transaction model. Registration,
-  XPC, daemon integration, and production power-setting I/O remain unimplemented.
+  packaged deployment, client integration, and production operation remain
+  unimplemented; a compile-only unregistered helper target is tracked below.
 - Added a serialized session coordinator and atomic private lease journal with
   120-second monotonic heartbeat expiry, boot-session recovery, owner/mode
   checks, and compare-before-restore. Tests use injected settings storage;
-  production daemon, XPC, and system-setting adapter remain unimplemented.
-- Verified the expanded Sender suite: 116 tests pass; Intel Release and arm64
+  production daemon/XPC integration remains unregistered and is not operational.
+- Verified the expanded Sender suite: 119 tests pass; Intel Release and arm64
   Debug builds succeed.
+- Added an unregistered LaunchDaemon executable target with a fixed-command
+  `pmset` adapter, a signed-team XPC gate derived from the helper's own code
+  signature, peer-UID ownership, and lease watchdog.
+  It compiles for x86_64 and arm64 but has no launchd registration/package or
+  configured Developer ID Team ID, and was not run.
 
 ## Unreleased — Full HD legacy receiver support
 

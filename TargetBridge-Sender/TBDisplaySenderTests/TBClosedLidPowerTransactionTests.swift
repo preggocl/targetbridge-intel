@@ -47,6 +47,30 @@ final class TBClosedLidPowerTransactionTests: XCTestCase {
         XCTAssertFalse(TBClosedLidPowerTransaction.isValidSessionID(String(repeating: "x", count: 65)))
     }
 
+    func testHelperSigningRequirementFailsClosedWithoutValidTeamOrBundle() {
+        XCTAssertNil(TBClosedLidPowerHelperIdentity.signingRequirement(bundleIdentifier: "com.targetbridge.intel-sender", teamIdentifier: ""))
+        XCTAssertNil(TBClosedLidPowerHelperIdentity.signingRequirement(bundleIdentifier: "com.targetbridge.intel-sender", teamIdentifier: "ADHOC"))
+        XCTAssertNil(TBClosedLidPowerHelperIdentity.signingRequirement(bundleIdentifier: "com targetbridge", teamIdentifier: "ABCDE12345"))
+        XCTAssertEqual(
+            TBClosedLidPowerHelperIdentity.signingRequirement(bundleIdentifier: "com.targetbridge.intel-sender", teamIdentifier: "ABCDE12345"),
+            "identifier \"com.targetbridge.intel-sender\" and anchor apple generic and certificate leaf[subject.OU] = \"ABCDE12345\""
+        )
+    }
+
+    func testPMSetAdapterUsesOnlyFixedAllowlistedCommands() {
+        XCTAssertEqual(TBClosedLidPowerPMSetCommand.executablePath, "/usr/bin/pmset")
+        XCTAssertEqual(TBClosedLidPowerPMSetCommand.setArguments(disabled: true), ["-a", "disablesleep", "1"])
+        XCTAssertEqual(TBClosedLidPowerPMSetCommand.setArguments(disabled: false), ["-a", "disablesleep", "0"])
+    }
+
+    func testPMSetSleepDisabledParserRejectsUnknownOrAmbiguousOutput() {
+        XCTAssertEqual(TBClosedLidPowerPMSetCommand.parseSleepDisabled("System-wide power settings:\n SleepDisabled 1\n"), true)
+        XCTAssertEqual(TBClosedLidPowerPMSetCommand.parseSleepDisabled(" SleepDisabled 0\n"), false)
+        XCTAssertNil(TBClosedLidPowerPMSetCommand.parseSleepDisabled(" SleepDisabled 2\n"))
+        XCTAssertNil(TBClosedLidPowerPMSetCommand.parseSleepDisabled(" SleepDisabled 1 extra\n"))
+        XCTAssertNil(TBClosedLidPowerPMSetCommand.parseSleepDisabled("No power settings"))
+    }
+
     func testLeaseEnforcesBoundedDurationAndSafeOwnerAndPriorState() {
         let now: TimeInterval = 10_000
         XCTAssertNotNil(TBClosedLidPowerTransaction.makeLease(sessionID: "s1", bootSessionID: "boot1", ownerUID: 501, originalSleepDisabled: false, uptime: now))
