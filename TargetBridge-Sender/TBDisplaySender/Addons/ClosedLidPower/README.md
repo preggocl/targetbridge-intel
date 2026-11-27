@@ -1,9 +1,12 @@
 # Closed-Lid Streaming Power
 
-Internal native Sender add-on. This directory is the code boundary for the
-pure safety policy and public battery/thermal observation layer. The feature is
-**not user-operational**: it has no privileged helper, lifecycle integration,
-settings UI, or lid detection, and makes no system power-setting changes.
+Internal native Sender add-on. This directory contains the pure safety policy,
+public battery/thermal observation layer, bounded session lease, private
+journal, and injected-settings coordinator. The feature is **not
+user-operational**: it has no privileged daemon/XPC transport, production
+power-setting adapter, lifecycle integration, settings UI, or lid detection.
+The coordinator tests do not execute `pmset` and make no system power-setting
+changes.
 
 Read the design and safety requirements in
 [`docs/Closed-Lid-Power-Addon.md`](../../../../docs/Closed-Lid-Power-Addon.md)

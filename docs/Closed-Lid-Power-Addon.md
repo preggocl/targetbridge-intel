@@ -1,7 +1,7 @@
 # Closed-Lid Streaming Power Add-on
 
-Status: **safety policy, public battery/thermal monitor, and pure restore
-transaction model implemented; no privileged code is installed and the feature
+Status: **safety policy, public battery/thermal monitor, and tested lease/journal
+coordinator implemented; no privileged service is registered and the feature
 is not user-operational**
 Owner: TargetBridge Sender  
 Scope: optional, native Sender add-on for keeping an active stream alive when a
@@ -29,15 +29,20 @@ It is an optional software workaround, not an Apple-supported clamshell mode.
 
 The current development milestone adds a pure safety-policy reducer, an
 injectable monitor using IOPowerSources and ProcessInfo thermal notifications,
-and a pure helper-transaction model for prior-value capture, bounded session
-identifiers, and compare-before-restore decisions. Focused Intel-architecture
-tests cover these pieces. The privileged design now targets an `SMAppService`
+and a helper transaction core with a durable atomic journal, bounded 120-second
+leases, monotonic uptime, boot-session identity, owner/mode validation, and
+compare-before-restore recovery. A serial coordinator persists before applying
+an injected setting, verifies writes, checks session ownership, and retains the
+journal after failed restoration. Focused Intel-architecture tests cover these
+pieces, including external edits, reboot, expiry, and malformed/symlinked
+records. The privileged design now targets an `SMAppService`
 LaunchDaemon under the existing macOS 14 deployment floor, with XPC restricted
 to the signed TargetBridge team and a single allowlisted power-policy
-operation. There is no daemon target or registration code, durable journal,
-XPC transport, lid sensor, stream lifecycle integration, settings control, or
-hardware acceptance yet. This implementation cannot keep a Mac awake with its
-lid closed and does not change system power settings.
+operation. The coordinator uses an injected settings store; it does not run
+`pmset` or alter system settings. There is no daemon target or registration
+code, production settings adapter, XPC transport, lid sensor, stream lifecycle
+integration, settings control, or hardware acceptance yet. This implementation
+cannot keep a Mac awake with its lid closed.
 
 ## User experience and warning
 

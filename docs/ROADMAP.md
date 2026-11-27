@@ -18,9 +18,12 @@
 
 - Continue implementing the opt-in Closed-Lid Streaming Power native add-on.
   The pure safety policy and public battery/thermal monitor are in place.
-  The helper transaction model is tested; use `SMAppService` LaunchDaemon
-  with signed-team XPC checks. Next: implement its durable lease/recovery and
-  threat-review the daemon before connecting it to stream lifecycle or exposing UI. Keep it separate from idle-sleep
+  The helper transaction coordinator, durable journal, lease expiry and
+  reboot recovery model are tested. Use `SMAppService` LaunchDaemon with
+  signed-team XPC checks. Next: build the daemon/XPC and production settings
+  adapter, then threat-review it before connecting stream lifecycle or showing
+  UI. Derive the client UID from authenticated XPC identity and keep all
+  settings calls behind an allowlisted interface. Keep it separate from idle-sleep
   control; require explicit administrator authorization, restore the exact prior power setting, and stop streaming on
   configured low-battery or critical thermal conditions. Complete the
   compatibility and physical hardware gates in

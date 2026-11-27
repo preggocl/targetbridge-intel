@@ -43,7 +43,11 @@ rewritten. Continue commits and GitHub updates from the clean review checkout.
   `TargetBridge-Sender/TBDisplaySender/Addons/ClosedLidPower/`. Focused policy
   and monitor tests pass in the x86_64 test configuration. A pure transaction
   model now covers begin-state capture, bounded session IDs, and conditional
-  restore; its 5 focused tests pass. The helper direction is `SMAppService`
+  restore. A root-ownership/mode-checked atomic lease journal and serialized
+  coordinator now test bounded heartbeat leases, failed-restore retry,
+  external edits, and boot-change recovery. The full Sender suite passes 116
+  tests; Intel Release and arm64 Debug builds pass. These tests use an injected
+  fake settings store; no production helper or `pmset` adapter exists. The helper direction is `SMAppService`
   LaunchDaemon on macOS 14+, with signed-team XPC peer checks. It is not yet
   user-operational: no lid sensor, privileged helper, stream lifecycle
   integration, or settings UI exists; no system power setting has changed.

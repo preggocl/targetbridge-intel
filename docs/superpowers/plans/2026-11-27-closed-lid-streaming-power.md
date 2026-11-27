@@ -73,8 +73,15 @@ power settings or install/register privileged services.
 - [x] Require XPC peer code-signing validation; ad-hoc builds must report the feature unavailable.
 - [x] Add pure transaction decisions for begin/restore, session ID validation, and compare-before-restore.
 - [x] Add focused tests for prior value, invalid/existing sessions, external changes, and bounded identifiers.
-- [ ] Implement durable helper journal, ownership/expiry, daemon/XPC targets, and recovery tests before any registration path.
+- [x] Implement a private atomic lease journal and serialized session coordinator with injected settings I/O, owner checks, bounded heartbeat expiry using monotonic uptime, compare-and-restore, and boot-session recovery decisions.
+- [x] Test filesystem mode/owner, malformed/symlink records, lease expiry, wrong owner, helper retry after failed restore, external setting changes, and boot-session change.
+- [ ] Implement daemon/XPC targets and production settings adapter; do not add registration until signing identity and recovery behavior are reviewed.
 - [ ] Threat-review code identity, IPC framing/allowlist, journal permissions, crash/reboot recovery, and uninstall.
+
+The injected coordinator tests do not invoke `pmset`; only a future daemon
+adapter may make system changes. Derive the caller UID from the authenticated
+XPC audit identity, never from a request field. Use one coordinator instance
+inside the singleton daemon to serialize all client sessions.
 
 ### Task 3: Privileged helper and reversible power-policy transaction
 
@@ -87,7 +94,7 @@ power settings or install/register privileged services.
 - Expose only validated `beginSession`, `heartbeat`, `status`, and `endSession` operations.
 - Persist the original policy before applying an override; compare current value before restoration; serialize concurrent sessions; recover expired/orphaned leases after helper restart and reboot.
 
-- [ ] Select the service mechanism compatible with the exact supported macOS floor and code-signing model.
+- [x] Select the service mechanism compatible with the exact supported macOS floor and code-signing model (`SMAppService` LaunchDaemon, macOS 14+).
 - [ ] Threat-review authorization, XPC peer validation, file permissions, replay/race behavior, crash recovery, and uninstall.
 - [ ] Test command allowlisting, invalid requests, session ownership, exact restoration, compare-and-restore, expiry, helper restart, and boot recovery.
 - [ ] Build without registering/installing the helper; manual registration and power changes require a separate explicit user action.
@@ -130,7 +137,7 @@ power settings or install/register privileged services.
 
 ## Current execution boundary
 
-Tasks 1 and 2 are implemented. Do not expose an enabled clamshell control until
+Tasks 1, 2, and the pure lease/journal/coordinator core are implemented. Do not expose an enabled clamshell control until
 Tasks 3 and 4 provide a real, recoverable privilege boundary. The initial
 milestone must remain safe to build and run without admin authorization and
 without changing macOS power settings.
